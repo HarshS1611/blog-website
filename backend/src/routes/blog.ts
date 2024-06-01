@@ -25,6 +25,7 @@ bookRouter.post('/', async (c) => {
 		data: {
 			title: body.title,
 			content: body.content,
+			imageUrl: body.imageUrl,
 			authorId: userId
 		}
 	});
@@ -47,7 +48,8 @@ bookRouter.put('/', async (c) => {
 		},
 		data: {
 			title: body.title,
-			content: body.content
+			content: body.content,
+			imageUrl: body.imageUrl
 		}
 	});
 
