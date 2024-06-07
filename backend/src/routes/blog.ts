@@ -71,3 +71,12 @@ bookRouter.get('/:id', async (c) => {
 	return c.json(post);
 })
 
+bookRouter.get('/', async (c) => {
+	const prisma = new PrismaClient({
+		datasourceUrl: c.env?.DATABASE_URL	,
+	}).$extends(withAccelerate());
+
+	const posts = await prisma.post.findMany();
+	console.log(posts);
+	return c.json(posts);
+});
