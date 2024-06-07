@@ -1,21 +1,36 @@
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
-import { sign } from "hono/jwt";
+import { sign,verify } from "hono/jwt";
 import { signinInput, signupInput } from "@harshs_16/zod-verifier"
+import { getDBInstance } from "../utils";
 
 export const userRouter = new Hono<{
   Bindings: {
     DATABASE_URL: string;
     JWT_SECRET: string;
+  },
+  Variables: {
+    userId: string;
   }
 }>();
 
-userRouter.post('/signup', async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env?.DATABASE_URL,
-  }).$extends(withAccelerate());
+userRouter.use("/me", async (c, next) => {
+  const jwt = c.req.header('Authorization');
+	if (!jwt) {
+		c.status(401);
+		return c.json({ error: "unauthorized" });
+	}
+	const token = jwt.split(' ')[1];
+	const payload = await verify(token, c.env.JWT_SECRET);
+	if (!payload) {
+		c.status(401);
+		return c.json({ error: "unauthorized" });
+	}
+	c.set('userId', payload.id as string);
+	await next()
+});
 
+userRouter.post('/signup', async (c) => {
+  const prisma = getDBInstance(c);
   const body = await c.req.json();
   const { success } = signupInput.safeParse(body);
   if (!success) {
@@ -29,7 +44,7 @@ userRouter.post('/signup', async (c) => {
         password: body.password
       }
     });
-    const jwt = await sign({ id: user.id }, "test");
+    const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
     return c.json({ jwt });
   } catch (e) {
     c.status(403);
@@ -38,9 +53,7 @@ userRouter.post('/signup', async (c) => {
 })
 
 userRouter.post('/signin', async (c) => {
-  const prisma = new PrismaClient({
-    datasourceUrl: c.env?.DATABASE_URL,
-  }).$extends(withAccelerate());
+  const prisma = getDBInstance(c);
 
   const body = await c.req.json();
   const { success } = signinInput.safeParse(body);
@@ -59,6 +72,18 @@ userRouter.post('/signin', async (c) => {
     return c.json({ error: "user not found" });
   }
 
-  const jwt = await sign({ id: user.id }, "test");
+  const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
   return c.json({ jwt });
 })
+
+userRouter.get('/me', async (c) => {
+  const prisma = getDBInstance(c);
+  const userId = c.get('userId');
+  const user = await prisma.user.findUnique({
+    where: {
+      id: userId
+    }
+  });
+  return c.json(user);
+})
+
