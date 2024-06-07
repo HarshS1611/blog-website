@@ -3,7 +3,7 @@ compatibility_date = "2023-12-01"
 
 [vars]
 # MY_VAR = "my-variable"
-DATABASE_URL="prisma://accelerate.prisma-data.net/?api_key=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhcGlfa2V5IjoiNTE5OGIyNzktOGJmOS00NjgyLTk1MDMtYTczNTM3NjFkMWQ5IiwidGVuYW50X2lkIjoiZjFjZjk1NWM5ZDQyZjM2Zjg2ODgzODc0NjU3ZmE0OWE2M2UwYTdkNGI1NDhjOWVmYjlhMDIxMTZiNGYyYmM5MCIsImludGVybmFsX3NlY3JldCI6ImM4MjE2MGEwLWI1NjctNDY0NS1hMjBlLWZjMTcwNzRhY2Y0ZiJ9.UDj-E1IJfEY_nrru2OYE0f1fOsDwh-DCz3JZntGwfRI"
+DATABASE_URL= env("ACC_DATABASE_URL")
 # [[kv_namespaces]]
 # binding = "MY_KV_NAMESPACE"
 # id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
