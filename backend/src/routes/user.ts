@@ -2,6 +2,7 @@ import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { sign } from "hono/jwt";
+import { signinInput, signupInput } from "@harshs_16/zod-verifier"
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -12,37 +13,44 @@ export const userRouter = new Hono<{
 
 userRouter.post('/signup', async (c) => {
   const prisma = new PrismaClient({
-    datasourceUrl: c.env.DATABASE_URL,
-  }).$extends(withAccelerate());
-
-  const body = await c.req.json();
-
-  const user = await prisma.user.create({
-    data: {
-      name: body.name,
-      email: body.email,
-      password: body.password,
-    },
-  });
-
-  const token = await sign({ id: user.id }, c.env.JWT_SECRET)
-
-  return c.json({
-    jwt: token
-  })
-})
-
-userRouter.post('/signin', async (c) => {
-  const prisma = new PrismaClient({
-    //@ts-ignore
     datasourceUrl: c.env?.DATABASE_URL,
   }).$extends(withAccelerate());
 
   const body = await c.req.json();
+  const { success } = signupInput.safeParse(body);
+  if (!success) {
+    c.status(400);
+    return c.json({ error: "invalid input" });
+  }
+  try {
+    const user = await prisma.user.create({
+      data: {
+        email: body.email,
+        password: body.password
+      }
+    });
+    const jwt = await sign({ id: user.id }, "test");
+    return c.json({ jwt });
+  } catch (e) {
+    c.status(403);
+    return c.json({ error: "error while signing up" });
+  }
+})
+
+userRouter.post('/signin', async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env?.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  const body = await c.req.json();
+  const { success } = signinInput.safeParse(body);
+  if (!success) {
+    c.status(400);
+    return c.json({ error: "invalid input" });
+  }
   const user = await prisma.user.findUnique({
     where: {
-      email: body.email,
-      password: body.password
+      email: body.email
     }
   });
 
@@ -51,6 +59,6 @@ userRouter.post('/signin', async (c) => {
     return c.json({ error: "user not found" });
   }
 
-  const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
+  const jwt = await sign({ id: user.id }, "test");
   return c.json({ jwt });
 })

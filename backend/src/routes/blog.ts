@@ -1,26 +1,48 @@
 import { PrismaClient } from "@prisma/client/edge";
 import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
-import { sign } from "hono/jwt";
+import { sign, verify } from "hono/jwt";
 
-export const bookRouter = new Hono<{
-    Bindings: {
-        DATABASE_URL: string;
-        JWT_SECRET: string;
-    },
-    Variables: {
-        userId: string;
-    }
+import { createPostInput, updatePostInput } from "@harshs_16/zod-verifier";
+export const blogRouter = new Hono<{
+	Bindings: {
+		DATABASE_URL: string;
+		JWT_SECRET: string;
+	},
+	Variables: {
+		userId: string;
+	}
 }>();
 
+blogRouter.use('/api/v1/blog/*', async (c, next) => {
+	const jwt = c.req.header('Authorization');
+	if (!jwt) {
+		c.status(401);
+		return c.json({ error: "unauthorized" });
+	}
+	const token = jwt.split(' ')[1];
+	const payload = await verify(token, "test");
+	if (!payload) {
+		c.status(401);
+		return c.json({ error: "unauthorized" });
+	}
+	c.set('userId', payload.id as string);
+	await next()
+})
 
-bookRouter.post('/', async (c) => {
+
+blogRouter.post('/', async (c) => {
 	const userId = c.get('userId');
 	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL	,
+		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 
 	const body = await c.req.json();
+	const { success } = createPostInput.safeParse(body);
+	if (!success) {
+		c.status(400);
+		return c.json({ error: "invalid input" });
+	}
 	const post = await prisma.post.create({
 		data: {
 			title: body.title,
@@ -34,13 +56,19 @@ bookRouter.post('/', async (c) => {
 	});
 })
 
-bookRouter.put('/', async (c) => {
+blogRouter.put('/', async (c) => {
 	const userId = c.get('userId');
 	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL	,
+		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 
 	const body = await c.req.json();
+
+	const { success } = updatePostInput.safeParse(body);
+	if (!success) {
+		c.status(400);
+		return c.json({ error: "invalid input" });
+	}
 	prisma.post.update({
 		where: {
 			id: body.id,
@@ -56,10 +84,10 @@ bookRouter.put('/', async (c) => {
 	return c.text('updated post');
 });
 
-bookRouter.get('/:id', async (c) => {
+blogRouter.get('/:id', async (c) => {
 	const id = c.req.param('id');
 	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL	,
+		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 
 	const post = await prisma.post.findUnique({
@@ -71,9 +99,9 @@ bookRouter.get('/:id', async (c) => {
 	return c.json(post);
 })
 
-bookRouter.get('/', async (c) => {
+blogRouter.get('/', async (c) => {
 	const prisma = new PrismaClient({
-		datasourceUrl: c.env?.DATABASE_URL	,
+		datasourceUrl: c.env?.DATABASE_URL,
 	}).$extends(withAccelerate());
 
 	const posts = await prisma.post.findMany();
