@@ -76,14 +76,4 @@ userRouter.post('/signin', async (c) => {
   return c.json({ jwt });
 })
 
-userRouter.get('/me', async (c) => {
-  const prisma = getDBInstance(c);
-  const userId = c.get('userId');
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId
-    }
-  });
-  return c.json(user);
-})
 
