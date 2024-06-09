@@ -31,7 +31,7 @@ userRouter.post('/signup', async (c) => {
     return c.json({ jwt });
   } catch (e) {
     c.status(403);
-    return c.json({ error: e});
+    return c.json({ error: "user already exists"});
   }
 })
 
