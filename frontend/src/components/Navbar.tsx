@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import WriteIcon from './icons/PostIcon';
 import Profile from './Profile';
+import Search from './Search';
 
 interface AppbarProps {
   skipAuthCheck?: boolean;
@@ -22,6 +23,7 @@ const Appbar = ({ skipAuthCheck = false, pageActions, hideWriteAction = false }:
         <Link to="/" className="text-xl font-light">
         <span className="text-gray-700">figuring</span><span className="text-black">out</span><span className="text-green-700">.Life</span>
         </Link>
+        <Search />
       </div>
 
       <div className="flex items-center gap-1">
