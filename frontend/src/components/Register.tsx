@@ -1,4 +1,4 @@
-import { SignupInput } from '@aadeshk/medium-common';
+import { signupInput } from '@harshs_16/zod-verifier';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -14,7 +14,7 @@ import validateEmail from '../util/emailValidation';
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [authInputs, setAuthInputs] = useState<SignupInput>({
+  const [authInputs, setAuthInputs] = useState({
     name: '',
     email: '',
     password: '',

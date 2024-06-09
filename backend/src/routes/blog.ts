@@ -14,6 +14,28 @@ export const blogRouter = new Hono<{
 	}
 }>();
 
+blogRouter.get('/bulk/:id', async (c) => {
+	const id = c.req.param('id');
+	const prisma = getDBInstance(c);
+
+
+	const post = await prisma.post.findUnique({
+		where: {
+			id
+		}
+	});
+
+	return c.json(post);
+})
+
+blogRouter.get('/bulk', async (c) => {
+	const prisma = getDBInstance(c);
+	const posts = await prisma.post.findMany();
+	console.log(posts);
+	return c.json(posts);
+});
+
+
 blogRouter.use('/*', async (c, next) => {
 	const jwt = c.req.header('Authorization');
 	if (!jwt) {
@@ -65,10 +87,11 @@ blogRouter.put('/', async (c) => {
 		c.status(400);
 		return c.json({ error: "invalid input" });
 	}
-	 try {
+	try {
 		const post = await prisma.post.update({
 			where: {
-				id: body.id
+				id: body.id,
+				authorId: userId
 			},
 			data: {
 				title: body.title,
@@ -85,23 +108,26 @@ blogRouter.put('/', async (c) => {
 	}
 });
 
-blogRouter.get('/:id', async (c) => {
-	const id = c.req.param('id');
-	const prisma = getDBInstance(c);
 
+blogRouter.delete("/:id", async (c) => {
+	try {
+		const userId = c.get("userId");
+		const prisma = getDBInstance(c);
+		const postId = c.req.param("id");
+		await prisma.post.delete({
+			where: { id: postId,
+				authorId: userId
+			 }
+		})
 
-	const post = await prisma.post.findUnique({
-		where: {
-			id
-		}
-	});
-
-	return c.json(post);
-})
-
-blogRouter.get('/', async (c) => {
-	const prisma = getDBInstance(c);
-	const posts = await prisma.post.findMany();
-	console.log(posts);
-	return c.json(posts);
+		return c.json({
+			message: "Post deleted successfully",
+		});
+	} catch (e) {
+		console.log(e);
+		c.status(411);
+		return c.json({
+			message: "Error while deleting post",
+		});
+	}
 });

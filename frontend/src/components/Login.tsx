@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { SigninInput } from '@aadeshk/medium-common';
+import { signinInput } from '@harshs_16/zod-verifier';
 import InputField from './InputField';
 import { BACKEND_URL } from '../config';
 import { toast } from 'react-toastify';
@@ -12,7 +12,7 @@ import PasswordField from './PasswordField';
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [authInputs, setAuthInputs] = useState<SigninInput>({
+  const [authInputs, setAuthInputs] = useState({
     email: '',
     password: '',
   });
@@ -30,7 +30,7 @@ const Login = () => {
         const response = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, authInputs);
         const token = response.data.jwt;
         localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(response?.data?.user || {}));
+        localStorage.setItem('userInfo', JSON.stringify(response?.data?.user || {}));
         navigate('/blogs');
       }
       toast.error('Email & Password are mandatory fields.');

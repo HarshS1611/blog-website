@@ -8,26 +8,8 @@ export const userRouter = new Hono<{
     DATABASE_URL: string;
     JWT_SECRET: string;
   },
-  Variables: {
-    userId: string;
-  }
 }>();
 
-userRouter.use("/me", async (c, next) => {
-  const jwt = c.req.header('Authorization');
-	if (!jwt) {
-		c.status(401);
-		return c.json({ error: "unauthorized" });
-	}
-	const token = jwt.split(' ')[1];
-	const payload = await verify(token, c.env.JWT_SECRET);
-	if (!payload) {
-		c.status(401);
-		return c.json({ error: "unauthorized" });
-	}
-	c.set('userId', payload.id as string);
-	await next()
-});
 
 userRouter.post('/signup', async (c) => {
   const prisma = getDBInstance(c);
@@ -40,6 +22,7 @@ userRouter.post('/signup', async (c) => {
   try {
     const user = await prisma.user.create({
       data: {
+        name: body.name,
         email: body.email,
         password: body.password
       }
@@ -48,7 +31,7 @@ userRouter.post('/signup', async (c) => {
     return c.json({ jwt });
   } catch (e) {
     c.status(403);
-    return c.json({ error: "error while signing up" });
+    return c.json({ error: e});
   }
 })
 
