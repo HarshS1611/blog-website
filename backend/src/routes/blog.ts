@@ -2,6 +2,7 @@ import { Hono } from "hono";
 import { verify } from "hono/jwt";
 
 import { getDBInstance } from "../utils";
+import { getFormattedDate } from "../utils";
 
 import { createPostInput, updatePostInput } from "@harshs_16/zod-verifier";
 export const blogRouter = new Hono<{
@@ -68,7 +69,8 @@ blogRouter.post('/', async (c) => {
 			title: body.title,
 			content: body.content,
 			imageUrl: body.imageUrl,
-			authorId: userId
+			authorId: userId,
+			publishedDateTime : getFormattedDate(),
 		}
 	});
 	return c.json({
