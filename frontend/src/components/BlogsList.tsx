@@ -51,7 +51,7 @@ const BlogsList = () => {
               key={blog?.id}
               id={blog?.id}
               author={blog?.author}
-              publishedDate={blog?.publishedDateTime}
+              publishedDate={blog?.publishedDate}
               title={blog.title}
               content={blog.content}
             />
