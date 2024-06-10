@@ -15,6 +15,7 @@ model User {
   posts     Post[]
   bookmarks Bookmark[]
   upvotes   Upvote[]
+  comments  Comment[]
 }
 
 model Post {
@@ -27,6 +28,7 @@ model Post {
   authorId  String
   bookmarks Bookmark[]
   upvotes   Upvote[]
+  comments  Comment[]
 }
 
 model Bookmark {
@@ -38,6 +40,14 @@ model Bookmark {
 }
 
 model Upvote {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
+}
+
+model Comment {
   id     String @id @default(uuid())
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
