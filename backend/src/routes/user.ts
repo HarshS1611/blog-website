@@ -62,6 +62,26 @@ userRouter.post('/signin', async (c) => {
   return c.json({ jwt });
 })
 
+userRouter.use("/*", async (c, next) => {
+  try {
+    const header = c.req.header("Authorization") || "";
+    const token = header && header.split(" ")[1];
+    const user = await verify(token, c.env.JWT_SECRET);
+    if (user && typeof user.id === "string") {
+      c.set("userId", user.id);
+      return next();
+    } else {
+      c.status(403);
+      return c.json({ error: "Unauthorized " });
+    }
+  } catch (e) {
+    c.status(403);
+    return c.json({
+      error: "Credentials failed",
+    });
+  }
+});
+
 userRouter.get('/me', async (c) => {
   const prisma = getDBInstance(c);
   const userId = c.get('userId');
@@ -122,7 +142,7 @@ userRouter.get("/", async (c) => {
   }
 });
 
-userRouter.post("/updateDetail", async (c) => {
+userRouter.put("/updateDetail", async (c) => {
   try {
     const prisma = getDBInstance(c);
     const userId = c.get("userId");
