@@ -8,19 +8,29 @@ datasource db {
 }
 
 model User {
-  id       String   @id @default(uuid())
-  email    String   @unique
-  name     String?
-  password String
-  posts    Post[]
+  id        String     @id @default(uuid())
+  email     String     @unique
+  name      String?
+  password  String
+  posts     Post[]
+  bookmarks Bookmark[]
 }
 
 model Post {
-  id        String   @id @default(uuid())
+  id        String     @id @default(uuid())
   title     String
   content   String
   imageUrl  String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
+  published Boolean    @default(false)
+  author    User       @relation(fields: [authorId], references: [id])
   authorId  String
+  bookmarks Bookmark[]
+}
+
+model Bookmark {
+  id     String @id @default(uuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  postId String
 }
