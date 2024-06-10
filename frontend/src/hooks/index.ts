@@ -71,11 +71,10 @@ export const useBlog = ({ id }: { id: string }) => {
       id: '',
       name: '',
       email: '',
-      details: '',
+      bio: '',
       profilePic: '',
     },
     claps: [],
-    tagsOnPost: [],
     published: true,
   });
 

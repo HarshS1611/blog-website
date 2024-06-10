@@ -7,16 +7,10 @@ export interface Post {
     id: string;
     name: string;
     email?: string;
-    details?: string;
+    bio?: string;
     profilePic?: string;
   };
   published: boolean;
-  tagsOnPost: Array<{ tag: Tag }>;
   claps: [];
   bookmarkId?: string;
-}
-
-export interface Tag {
-  id: string;
-  tagName: string;
 }

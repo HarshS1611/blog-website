@@ -11,6 +11,7 @@ const BlogsList = () => {
   const [showConfetti, setShowConfetti] = useState(false);
 
   const { blogs, loading, handleLoadMore } = useBlogs();
+  console.log(blogs);
 
   useEffect(() => {
     if (!infiniteScrollRef) return;
@@ -20,6 +21,7 @@ const BlogsList = () => {
         const [entry] = entries;
         if (entry.isIntersecting && !loading) {
           handleLoadMore();
+          
         }
       },
       { threshold: 0.1 }
@@ -49,10 +51,9 @@ const BlogsList = () => {
               key={blog?.id}
               id={blog?.id}
               author={blog?.author}
-              publishedDate={blog?.publishedDate}
+              publishedDate={blog?.publishedDateTime}
               title={blog.title}
               content={blog.content}
-              tagsOnPost={blog.tagsOnPost}
             />
           ))}
       </div>

@@ -31,7 +31,7 @@ userRouter.post('/signup', async (c) => {
       }
     });
     const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-    return c.json({ jwt });
+    return c.json({ jwt, user });
   } catch (e) {
     c.status(403);
     return c.json({ error: "user already exists" });
@@ -59,7 +59,7 @@ userRouter.post('/signin', async (c) => {
   }
 
   const jwt = await sign({ id: user.id }, c.env.JWT_SECRET);
-  return c.json({ jwt });
+  return c.json({ jwt, user });
 })
 
 userRouter.use("/*", async (c, next) => {

@@ -17,6 +17,6 @@ app.use('/api/*', cors())
 app.route('/api/v1/user', userRouter)
 app.route('/api/v1/blog', blogRouter)
 app.route('/api/v1/bookmark', bookmarkRouter)
-app.route('/api/v1/clap', upvoteRouter)
+app.route('/api/v1/upvote', upvoteRouter)
 
 export default app

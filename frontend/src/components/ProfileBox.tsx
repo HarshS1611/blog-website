@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import useClickAway from '../hooks/useClickAway';
 import Avatar from './Avatar';
 
-const Profile = () => {
+const ProfileBox = () => {
   const ref = useRef<HTMLDivElement>(null);
 
-  const userJSON = localStorage.getItem('user') || '{}';
+  const userJSON = localStorage.getItem('userInfo') || '{}';
   const user = JSON.parse(userJSON);
 
   const navigate = useNavigate();
@@ -14,6 +14,7 @@ const Profile = () => {
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userInfo');
     navigate('/');
   };
 
@@ -58,4 +59,4 @@ const Profile = () => {
   );
 };
 
-export default Profile;
+export default ProfileBox;

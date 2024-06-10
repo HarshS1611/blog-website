@@ -9,7 +9,7 @@ interface Content {
 const useAutoSaveDraft = (name: string, getDraft: () => Content) => {
   const [lastSaved, setLastSaved] = useState<number | null>(null);
   const [isSaving, setIsSaving] = useState(false);
-  const userJSON = localStorage.getItem('user') || '{}';
+  const userJSON = localStorage.getItem('userInfo') || '{}';
   const user = JSON.parse(userJSON);
 
   useTimerInterval(15000, autoSaveHandler);

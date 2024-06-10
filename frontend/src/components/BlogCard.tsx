@@ -15,11 +15,10 @@ interface BlogCardProps {
   publishedDate: string;
   id: string;
   fullWidth?: boolean;
-  tagsOnPost: Array<any>;
 }
 
-const BlogCard = ({ author, title, content, publishedDate, id, fullWidth, tagsOnPost }: BlogCardProps) => {
-  // split and slice combination is added so that the string doesn't get trimmed in middle of a word
+const BlogCard = ({ author, title, content, publishedDate, id, fullWidth }: BlogCardProps) => {
+  // console.log(content,author,title,publishedDate,id,fullWidth);
   const quillContent = getPlainTextFromHTML(content).split(' ')?.slice(0, 40).join(' ') + '...';
 
   return (
@@ -43,13 +42,7 @@ const BlogCard = ({ author, title, content, publishedDate, id, fullWidth, tagsOn
         <ArticleImage uniqueId={id} />
       </div>
       <div className="flex col-span-full md:px-2">
-        <div className='flex'>
-					  {tagsOnPost?.slice(0,2).map((tagWrapper) => {
-						  return (
-							  <Pill id={tagWrapper.tag.id} tagName={tagWrapper.tag.tagName}/>
-						  )
-					})}
-				</div>
+      
         <div className="text-gray-600 pt-4">{Math.ceil(content.length / 300)} min read</div>
 
         </div>

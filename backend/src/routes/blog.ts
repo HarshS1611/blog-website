@@ -21,15 +21,6 @@ export const blogRouter = new Hono<{
 }>();
 
 
-
-
-blogRouter.get('/bulk', async (c) => {
-	const prisma = getDBInstance(c);
-	const posts = await prisma.post.findMany();
-	console.log(posts);
-	return c.json(posts);
-});
-
 blogRouter.get("/bulk/:id?", async (c) => {
 	try {
 		const userId = await c.req.param("id");

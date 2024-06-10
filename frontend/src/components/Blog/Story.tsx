@@ -12,7 +12,6 @@ import 'react-quill/dist/quill.bubble.css';
 import RemoveIcon from '../icons/Remove';
 import EditIcon from '../icons/Edit';
 import SingleBlogSkeleton from '../../skeletons/SingleBlogSkeleton';
-import { Tags } from '../Tags';
 import ClapButton from '../ClapButton';
 import Avatar from '../Avatar';
 
@@ -50,7 +49,6 @@ const Story = () => {
           <ReactQuill value={blog?.content} readOnly={true} theme={'bubble'} />
         </div>
       </div>
-      <Tags />
     </div>
   );
 };
@@ -70,7 +68,7 @@ const ActionBox = () => {
     id: id || '',
   });
   if (loading) <Loader />;
-  const user = JSON.parse(localStorage.getItem('user') || '{}') || {};
+  const user = JSON.parse(localStorage.getItem('userInfo') || '{}') || {};
   const isAuthor = user?.id === blog?.author?.id;
 
   const deleteStory = async () => {

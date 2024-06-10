@@ -4,8 +4,8 @@ interface PostQueryBase {
 		content?: boolean;
 		title?: boolean;
 		id?: boolean;
-		publishedDate?: boolean;
-		author?: { select: { name: boolean, email?: boolean, details?: boolean, profilePic?: boolean } };
+		publishedDateTime?: boolean;
+		author?: { select: { name: boolean, email?: boolean, bio?: boolean, profilePic?: boolean } };
 		published?: boolean;
 	};
 	orderBy?: Prisma.Enumerable<Prisma.PostOrderByWithRelationInput>;
@@ -43,8 +43,8 @@ export const buildQuery = (
 			content: true,
 			title: true,
 			id: true,
-			publishedDate: true,
-			author: { select: { name: true, details: true, profilePic: true, email: true } },
+			publishedDateTime: true,
+			author: { select: { name: true, bio: true, profilePic: true, email: true } },
 			published: true,
 		},
 		orderBy: [
@@ -71,8 +71,8 @@ export const buildPostSearchQuery = (keyword: string): SearchQueryWithWhere => {
 		select: {
 			title: true,
 			id: true,
-			publishedDate: true,
-			author: { select: { name: true, details: true, profilePic: true, email: true } },
+			publishedDateTime: true,
+			author: { select: { name: true, bio: true, profilePic: true, email: true } },
 		},
 		orderBy: [
 			{

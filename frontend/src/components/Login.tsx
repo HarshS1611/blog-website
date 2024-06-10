@@ -12,7 +12,7 @@ import PasswordField from './PasswordField';
 const Login = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [authInputs, setAuthInputs] = useState({
+  const [authInputs, setAuthInputs] = useState<signinInput>({
     email: '',
     password: '',
   });
@@ -29,8 +29,9 @@ const Login = () => {
       if (authInputs.email && authInputs.password) {
         const response = await axios.post(`${BACKEND_URL}/api/v1/user/signin`, authInputs);
         const token = response.data.jwt;
+        const userInfo = await response.data.user;
         localStorage.setItem('token', token);
-        localStorage.setItem('userInfo', JSON.stringify(response?.data?.user || {}));
+        localStorage.setItem('userInfo', JSON.stringify(userInfo));
         navigate('/blogs');
       }
       toast.error('Email & Password are mandatory fields.');

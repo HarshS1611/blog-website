@@ -14,7 +14,7 @@ import validateEmail from '../util/emailValidation';
 const Register = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState<boolean>(false);
-  const [authInputs, setAuthInputs] = useState({
+  const [authInputs, setAuthInputs] = useState<signupInput>({
     name: '',
     email: '',
     password: '',
