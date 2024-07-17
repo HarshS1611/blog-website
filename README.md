@@ -86,4 +86,3 @@ To make the developer experience smoother, you can now run both the frontend and
    ```
    This command will start both the frontend and backend servers simultaneously.
 
-For additional customization options and detailed information, please refer to the [concurrently documentation](https://www.npmjs.com/package/concurrently).
